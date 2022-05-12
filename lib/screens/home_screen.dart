@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:weather_app_flutter/constants/app_constants.dart';
-import 'package:weather_app_flutter/models/weather_info.dart';
-import 'package:weather_app_flutter/services/weather_api_service.dart';
-import 'package:weather_app_flutter/widgets/slider_indicator_dot.dart';
+import '../constants/app_constants.dart';
+import '../models/weather_info.dart';
+import '../widgets/slider_indicator_dot.dart';
+import '../blocks/weather_block.dart';
 import '../widgets/weather_dashboard.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -57,20 +57,25 @@ class _WeatherPageViewState extends State<WeatherPageView> {
     });
   }
 
-  Future<List<WeatherInfo>>? futureWeatherInfoList;
+  final weatherBlock = WeatherBloc();
 
   @override
   void initState() {
-    super.initState();
+    weatherBlock.eventSink.add(WeatherEvent.fetch);
 
-    //API call
-    futureWeatherInfoList = WeatherApiService().getFutureWeatherInfoList();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    weatherBlock.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<WeatherInfo>>(
-      future: futureWeatherInfoList,
+    return StreamBuilder<List<WeatherInfo>>(
+      stream: weatherBlock.weatherInfoListStream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           var weatherInfoList = snapshot.data!;
