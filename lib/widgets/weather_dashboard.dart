@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:weather_app_flutter/models/weather_info.dart';
 import 'package:weather_app_flutter/widgets/weather_parameter_view.dart';
-import '../models/weather_location.dart';
 
 class WeatherDashboard extends StatelessWidget {
-  final int index;
-  const WeatherDashboard(this.index, {Key? key}) : super(key: key);
+  final WeatherInfo weatherInfo;
+  const WeatherDashboard(this.weatherInfo, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    WeatherLocation weatherLocation = locationList[index];
-
     return Container(
       margin: const EdgeInsets.all(10.0),
       child: Column(
@@ -19,7 +17,7 @@ class WeatherDashboard extends StatelessWidget {
         children: [
           const SizedBox(height: 150),
           Text(
-            weatherLocation.city,
+            weatherInfo.city,
             style: GoogleFonts.lato(
               fontSize: 35,
               fontWeight: FontWeight.bold,
@@ -28,7 +26,7 @@ class WeatherDashboard extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           Text(
-            locationList[index].dateTime,
+            weatherInfo.dateTime,
             style: GoogleFonts.lato(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -40,7 +38,7 @@ class WeatherDashboard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                locationList[index].temparature,
+                weatherInfo.temparature,
                 style: GoogleFonts.lato(
                   fontSize: 85,
                   fontWeight: FontWeight.w300,
@@ -50,14 +48,14 @@ class WeatherDashboard extends StatelessWidget {
               Row(
                 children: [
                   SvgPicture.asset(
-                    locationList[index].iconUrl,
+                    weatherInfo.iconUrl,
                     width: 34,
                     height: 34,
                     color: Colors.white,
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    locationList[index].weatherType,
+                    weatherInfo.weatherType,
                     style: GoogleFonts.lato(
                       fontSize: 25,
                       fontWeight: FontWeight.w500,
@@ -80,19 +78,19 @@ class WeatherDashboard extends StatelessWidget {
               children: [
                 WeatherParameterView(
                   parameterName: "wind",
-                  value: locationList[index].wind,
+                  value: weatherInfo.wind,
                   unit: "km/h",
                   progressColor: Colors.green,
                 ),
                 WeatherParameterView(
                   parameterName: "Rain",
-                  value: locationList[index].rain,
+                  value: weatherInfo.rain,
                   unit: "%",
                   progressColor: Colors.red,
                 ),
                 WeatherParameterView(
                   parameterName: "Humidity",
-                  value: locationList[index].humidity,
+                  value: weatherInfo.humidity,
                   unit: "%",
                   progressColor: Colors.red,
                 ),
