@@ -3,7 +3,7 @@ import 'package:weather_app_flutter/models/weather_info.dart';
 import 'package:http/http.dart' as http;
 
 class WeatherApiService {
-  Future<List<WeatherInfo>> getWeatherInfoList() async {
+  Future<List<WeatherInfo>> getFutureWeatherInfoList() async {
     var client = http.Client();
     var url = AppConstants.weatherApiBaseUrl + "weather_info.json";
 

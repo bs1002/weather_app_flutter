@@ -64,7 +64,7 @@ class _WeatherPageViewState extends State<WeatherPageView> {
     super.initState();
 
     //API call
-    futureWeatherInfoList = WeatherApiService().getWeatherInfoList();
+    futureWeatherInfoList = WeatherApiService().getFutureWeatherInfoList();
   }
 
   @override
