@@ -36,7 +36,10 @@ class HomeScreen extends StatelessWidget {
           )
         ],
       ),
-      body: const WeatherPageView(),
+      body: Container(
+        color: AppConstants.brandColor,
+        child: const WeatherPageView(),
+      ),
     );
   }
 }
@@ -88,7 +91,7 @@ class _WeatherPageViewState extends State<WeatherPageView> {
                 height: double.infinity,
                 width: double.infinity,
               ),
-              Container(decoration: const BoxDecoration(color: Colors.black38)),
+              Container(color: Colors.black38),
               PageView.builder(
                 controller: _pageController,
                 itemBuilder: (context, index) {
@@ -97,8 +100,8 @@ class _WeatherPageViewState extends State<WeatherPageView> {
                 itemCount: weatherInfoList.length,
                 onPageChanged: _onPageChanged,
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 140, left: 15),
+              Padding(
+                padding: const EdgeInsets.only(top: 140, left: 15),
                 child: Row(
                   children: [
                     for (int i = 0; i < weatherInfoList.length; i++)
@@ -113,11 +116,16 @@ class _WeatherPageViewState extends State<WeatherPageView> {
           );
         } else if (snapshot.hasError) {
           return const Center(
-            child: Text("Something went wrong"),
+            child: Text(
+              "Something went wrong",
+              style: TextStyle(color: Colors.white),
+            ),
           );
         } else {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: Colors.white,
+            ),
           );
         }
       },
