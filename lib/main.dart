@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app_flutter/services/weather_api_service.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -10,12 +12,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Weather App',
-      theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => WeatherApiService(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Weather App',
+        theme: ThemeData(
+          primarySwatch: Colors.lightBlue,
+        ),
+        home: const HomeScreen(),
       ),
-      home: const HomeScreen(),
     );
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:weather_app_flutter/blocks/page_view/page_view_bloc.dart';
+import 'package:weather_app_flutter/services/weather_api_service.dart';
+import '../blocks/weather/weather_bloc.dart';
 import '../constants/app_constants.dart';
-import '../models/weather_info.dart';
 import '../widgets/slider_indicator_dot.dart';
-import '../blocks/weather_block.dart';
 import '../widgets/weather_dashboard.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -44,91 +46,90 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class WeatherPageView extends StatefulWidget {
+class WeatherPageView extends StatelessWidget {
   const WeatherPageView({Key? key}) : super(key: key);
-  @override
-  State<WeatherPageView> createState() => _WeatherPageViewState();
-}
-
-class _WeatherPageViewState extends State<WeatherPageView> {
-  int _currentPage = 0;
-  final _pageController = PageController(initialPage: 0);
-
-  _onPageChanged(int position) {
-    setState(() {
-      _currentPage = position;
-    });
-  }
-
-  final weatherBlock = WeatherBloc();
-
-  @override
-  void initState() {
-    weatherBlock.eventSink.add(WeatherEvent.fetch);
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    weatherBlock.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<WeatherInfo>>(
-      stream: weatherBlock.weatherInfoListStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          var weatherInfoList = snapshot.data!;
-          return Stack(
-            children: [
-              Image.network(
-                AppConstants.weatherApiBaseUrl +
-                    weatherInfoList[_currentPage].bgUrl,
-                fit: BoxFit.cover,
-                height: double.infinity,
-                width: double.infinity,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              WeatherBloc(RepositoryProvider.of<WeatherApiService>(context))
+                ..add(LoadWeather()),
+        ),
+        BlocProvider(
+          create: (context) => PageViewBloc(),
+        ),
+      ],
+      child: BlocBuilder<WeatherBloc, WeatherState>(
+        builder: (context, state) {
+          if (state is WeatherLoading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
               ),
-              Container(color: Colors.black38),
-              PageView.builder(
-                controller: _pageController,
-                itemBuilder: (context, index) {
-                  return WeatherDashboard(weatherInfoList[index]);
-                },
-                itemCount: weatherInfoList.length,
-                onPageChanged: _onPageChanged,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 140, left: 15),
-                child: Row(
+            );
+          }
+          if (state is WeatherLoaded) {
+            final weatherInfoList = state.weatherInfoList;
+
+            return BlocBuilder<PageViewBloc, PageViewState>(
+              builder: (context, state) {
+                var _currentPage = 0;
+
+                if (state is PageChanged) {
+                  _currentPage = state.index;
+                }
+                _onPageChanged(int position) {
+                  RepositoryProvider.of<PageViewBloc>(context)
+                      .add(ChangePage(position));
+                }
+
+                return Stack(
                   children: [
-                    for (int i = 0; i < weatherInfoList.length; i++)
-                      if (i == _currentPage)
-                        const SliderIndicatorDot(true)
-                      else
-                        const SliderIndicatorDot(false)
+                    Image.network(
+                      AppConstants.weatherApiBaseUrl +
+                          weatherInfoList[_currentPage].bgUrl,
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                    ),
+                    Container(color: Colors.black38),
+                    PageView.builder(
+                      controller: PageController(initialPage: 0),
+                      itemBuilder: (context, index) {
+                        return WeatherDashboard(weatherInfoList[index]);
+                      },
+                      itemCount: weatherInfoList.length,
+                      onPageChanged: _onPageChanged,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 140, left: 15),
+                      child: Row(
+                        children: [
+                          for (int i = 0; i < weatherInfoList.length; i++)
+                            if (i == _currentPage)
+                              const SliderIndicatorDot(true)
+                            else
+                              const SliderIndicatorDot(false)
+                        ],
+                      ),
+                    ),
                   ],
-                ),
+                );
+              },
+            );
+          } else {
+            return const Center(
+              child: Text(
+                "Something went wrong",
+                style: TextStyle(color: Colors.white),
               ),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return const Center(
-            child: Text(
-              "Something went wrong",
-              style: TextStyle(color: Colors.white),
-            ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-            ),
-          );
-        }
-      },
+            );
+          }
+        },
+      ),
     );
   }
 }
