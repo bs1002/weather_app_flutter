@@ -16,3 +16,11 @@ class WeatherLoaded extends WeatherState {
   @override
   List<Object> get props => [weatherInfoList];
 }
+
+class WeatherLoadFailed extends WeatherState {
+  final Object error;
+  const WeatherLoadFailed(this.error);
+
+  @override
+  List<Object> get props => [];
+}

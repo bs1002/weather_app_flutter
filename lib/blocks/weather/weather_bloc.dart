@@ -10,10 +10,11 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
 
   WeatherBloc(this._weatherApiService) : super(WeatherLoading()) {
     on<LoadWeather>(((event, emit) async {
-      final weatherInfoList =
-          await _weatherApiService.getFutureWeatherInfoList();
-      emit(WeatherLoaded(weatherInfoList));
-      //TODO: Handle WeatherLoadFailed State (Network Error)
+      await _weatherApiService.getFutureWeatherInfoList().then((value) {
+        emit(WeatherLoaded(value));
+      }).onError((error, stackTrace) {
+        emit(WeatherLoadFailed(error!));
+      });
     }));
   }
 }

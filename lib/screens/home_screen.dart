@@ -120,13 +120,15 @@ class WeatherPageView extends StatelessWidget {
                 );
               },
             );
-          } else {
-            return const Center(
+          } else if (state is WeatherLoadFailed) {
+            return Center(
               child: Text(
-                "Something went wrong",
-                style: TextStyle(color: Colors.white),
+                "${state.error}",
+                style: const TextStyle(color: Colors.white),
               ),
             );
+          } else {
+            return Container();
           }
         },
       ),
