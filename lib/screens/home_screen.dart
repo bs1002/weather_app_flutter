@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:weather_app_flutter/blocks/page_view/page_view_bloc.dart';
-import 'package:weather_app_flutter/services/weather_api_service.dart';
-import '../blocks/weather/weather_bloc.dart';
+import 'package:get/get.dart';
+import 'package:weather_app_flutter/controllers/page_view_controller.dart';
+import 'package:weather_app_flutter/controllers/weather_controller.dart';
 import '../constants/app_constants.dart';
 import '../widgets/slider_indicator_dot.dart';
 import '../widgets/weather_dashboard.dart';
+import '../models/weather_state.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -40,98 +40,81 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Container(
         color: AppConstants.brandColor,
-        child: const WeatherPageView(),
+        child: WeatherPageView(),
       ),
     );
   }
 }
 
 class WeatherPageView extends StatelessWidget {
-  const WeatherPageView({Key? key}) : super(key: key);
+  WeatherPageView({Key? key}) : super(key: key);
+
+  final pageController = Get.put(PageViewController());
+  final weatherController = Get.put(WeatherController());
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) =>
-              WeatherBloc(RepositoryProvider.of<WeatherApiService>(context))
-                ..add(LoadWeather()),
-        ),
-        BlocProvider(
-          create: (context) => PageViewBloc(),
-        ),
-      ],
-      child: BlocBuilder<WeatherBloc, WeatherState>(
-        builder: (context, state) {
-          if (state is WeatherLoading) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
-            );
+    return GetX<WeatherController>(builder: (controller) {
+      var state = controller.weatherState.value;
+      if (state is WeatherLoading) {
+        return const Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ),
+        );
+      }
+      if (state is WeatherLoaded) {
+        final weatherInfoList = state.weatherInfoList;
+        return GetX<PageViewController>(builder: ((controller) {
+          var _currentPage = controller.currentPage.value;
+
+          _onPageChanged(int position) {
+            controller.onPageChanged(position);
           }
-          if (state is WeatherLoaded) {
-            final weatherInfoList = state.weatherInfoList;
 
-            return BlocBuilder<PageViewBloc, PageViewState>(
-              builder: (context, state) {
-                var _currentPage = 0;
-
-                if (state is PageChanged) {
-                  _currentPage = state.index;
-                }
-                _onPageChanged(int position) {
-                  RepositoryProvider.of<PageViewBloc>(context)
-                      .add(ChangePage(position));
-                }
-
-                return Stack(
+          return Stack(
+            children: [
+              Image.network(
+                AppConstants.weatherApiBaseUrl +
+                    weatherInfoList[_currentPage].bgUrl,
+                fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
+              ),
+              Container(color: Colors.black38),
+              PageView.builder(
+                controller: PageController(initialPage: 0),
+                itemBuilder: (context, index) {
+                  return WeatherDashboard(weatherInfoList[index]);
+                },
+                itemCount: weatherInfoList.length,
+                onPageChanged: _onPageChanged,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 140, left: 15),
+                child: Row(
                   children: [
-                    Image.network(
-                      AppConstants.weatherApiBaseUrl +
-                          weatherInfoList[_currentPage].bgUrl,
-                      fit: BoxFit.cover,
-                      height: double.infinity,
-                      width: double.infinity,
-                    ),
-                    Container(color: Colors.black38),
-                    PageView.builder(
-                      controller: PageController(initialPage: 0),
-                      itemBuilder: (context, index) {
-                        return WeatherDashboard(weatherInfoList[index]);
-                      },
-                      itemCount: weatherInfoList.length,
-                      onPageChanged: _onPageChanged,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 140, left: 15),
-                      child: Row(
-                        children: [
-                          for (int i = 0; i < weatherInfoList.length; i++)
-                            if (i == _currentPage)
-                              const SliderIndicatorDot(true)
-                            else
-                              const SliderIndicatorDot(false)
-                        ],
-                      ),
-                    ),
+                    for (int i = 0; i < weatherInfoList.length; i++)
+                      if (i == _currentPage)
+                        const SliderIndicatorDot(true)
+                      else
+                        const SliderIndicatorDot(false)
                   ],
-                );
-              },
-            );
-          } else if (state is WeatherLoadFailed) {
-            return Center(
-              child: Text(
-                "${state.error}",
-                style: const TextStyle(color: Colors.white),
+                ),
               ),
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
-    );
+            ],
+          );
+        }));
+      } else if (state is WeatherLoadFailed) {
+        return Center(
+          child: Text(
+            "${state.error}",
+            style: const TextStyle(color: Colors.white),
+          ),
+        );
+      } else {
+        return Container();
+      }
+    });
   }
 }

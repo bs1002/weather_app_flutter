@@ -1,6 +1,7 @@
-part of 'weather_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'weather_info.dart';
 
-abstract class WeatherState extends Equatable {
+class WeatherState extends Equatable {
   const WeatherState();
 
   @override
