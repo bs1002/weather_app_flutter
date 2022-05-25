@@ -1,6 +1,6 @@
-import 'package:weather_app_flutter/constants/app_constants.dart';
-import 'package:weather_app_flutter/models/weather_info.dart';
-import 'package:weather_app_flutter/services/api_service.dart';
+import 'package:weather_app_flutter/app/core/constants/app_constants.dart';
+import 'package:weather_app_flutter/app/modules/home/models/weather_info.dart';
+import 'package:weather_app_flutter/app/network/api_service.dart';
 
 class WeatherApiService extends ApiService {
   var baseUrl = AppConstants.weatherApiBaseUrl;

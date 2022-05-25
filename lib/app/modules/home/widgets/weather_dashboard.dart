@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:weather_app_flutter/models/weather_info.dart';
-import 'package:weather_app_flutter/widgets/weather_parameter_view.dart';
+import 'package:weather_app_flutter/app/modules/home/models/weather_info.dart';
+import 'package:weather_app_flutter/app/modules/home/widgets/weather_parameter_view.dart';
 
 class WeatherDashboard extends StatelessWidget {
   final WeatherInfo weatherInfo;

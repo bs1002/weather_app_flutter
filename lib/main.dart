@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:weather_app_flutter/services/weather_api_service.dart';
-import 'screens/home_screen.dart';
+import 'package:weather_app_flutter/app/modules/home/views/home_screen.dart';
+import 'package:weather_app_flutter/app/network/weather_api_service.dart';
 
 void main() {
   runApp(const MyApp());

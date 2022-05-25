@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:weather_app_flutter/blocks/page_view/page_view_bloc.dart';
-import 'package:weather_app_flutter/services/weather_api_service.dart';
-import '../blocks/weather/weather_bloc.dart';
-import '../constants/app_constants.dart';
-import '../widgets/slider_indicator_dot.dart';
-import '../widgets/weather_dashboard.dart';
+import 'package:weather_app_flutter/app/core/constants/app_constants.dart';
+import 'package:weather_app_flutter/app/modules/home/blocks/page_view/page_view_bloc.dart';
+import 'package:weather_app_flutter/app/modules/home/blocks/weather/weather_bloc.dart';
+import 'package:weather_app_flutter/app/modules/home/widgets/slider_indicator_dot.dart';
+import 'package:weather_app_flutter/app/modules/home/widgets/weather_dashboard.dart';
+import 'package:weather_app_flutter/app/network/weather_api_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
