@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import '../services/weather_api_service.dart';
-import '../models/weather_state.dart';
+import 'package:weather_app_flutter/app/modules/home/models/weather_state.dart';
+import 'package:weather_app_flutter/app/network/weather_api_service.dart';
 
 class WeatherController extends GetxController {
   final WeatherApiService _weatherApiService = WeatherApiService();

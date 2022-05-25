@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:weather_app_flutter/controllers/page_view_controller.dart';
-import 'package:weather_app_flutter/controllers/weather_controller.dart';
-import '../constants/app_constants.dart';
-import '../widgets/slider_indicator_dot.dart';
-import '../widgets/weather_dashboard.dart';
-import '../models/weather_state.dart';
+import 'package:weather_app_flutter/app/core/constants/app_constants.dart';
+import 'package:weather_app_flutter/app/modules/home/controllers/page_view_controller.dart';
+import 'package:weather_app_flutter/app/modules/home/controllers/weather_controller.dart';
+import 'package:weather_app_flutter/app/modules/home/models/weather_state.dart';
+import 'package:weather_app_flutter/app/modules/home/widgets/slider_indicator_dot.dart';
+import 'package:weather_app_flutter/app/modules/home/widgets/weather_dashboard.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
